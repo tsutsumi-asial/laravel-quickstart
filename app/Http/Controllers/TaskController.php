@@ -40,9 +40,11 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
+        $userTasks = $this->tasks->forUser($request->user());
         return view('tasks.index', [
             'tasks' => $this->tasks->forUser($request->user()),
         ]);
+        //return response()->json($userTasks);
     }
 
     /**
@@ -78,5 +80,34 @@ class TaskController extends Controller
         $task->delete();
 
         return redirect('/tasks');
+    }
+
+    /**
+     * ユーザのタスク一覧をJSON形式で返します。
+     *
+     * @return JSON Object
+     */
+    public function getTasks(Request $request)
+    {
+        $userTasks = $this->tasks->forUser($request->user());
+        return response()->json($userTasks);
+    }
+
+    public function addTask(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|max:255',
+        ]);
+        $addedTask = $request->user()->tasks()->create([
+            'name' => $request->name,
+        ]);
+        return response()->json($addedTask);
+    }
+
+    public function deleteTask(Request $request, Task $task)
+    {
+        $this->authorize('destroy', $task);
+        $isDeleted = $task->delete();
+        return response()->json($isDeleted);
     }
 }
