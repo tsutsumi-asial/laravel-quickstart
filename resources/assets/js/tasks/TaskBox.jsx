@@ -8,7 +8,10 @@ export default class TaskBox extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tasks: []
+            tasks: [],
+            perPage: 10,
+            currentPage: 1,
+            lastPage: null
         };
         this._getTasks = this._getTasks.bind(this);
         $.ajaxSetup({
@@ -20,7 +23,9 @@ export default class TaskBox extends React.Component {
 
     _addTask(newTask) {
         $.post('/api/tasks', newTask, (addedTask) => {
-            this.setState({tasks: this.state.tasks.concat(addedTask)});
+            let tasks = this.state.tasks;
+            tasks.unshift(addedTask);
+            this.setState({tasks});
         });
     }
 
@@ -35,14 +40,18 @@ export default class TaskBox extends React.Component {
         });
     }
 
-    _getTasks() {
-        $.get('/api/tasks', (tasks) => {
-            this.setState({tasks});
+    _getTasks(page) {
+        $.get(`/api/tasks?page=${page}`, (response) => {
+            this.setState({
+                tasks: this.state.tasks.concat(response.data),
+                currentPage: response['current_page'],
+                lastPage: response['last_page']
+            });
         });
     }
 
     componentWillMount() {
-        this._getTasks();
+        this._getTasks(this.state.currentPage);
     }
 
     render() {
@@ -52,7 +61,7 @@ export default class TaskBox extends React.Component {
 
                     <TaskForm submit={ this._addTask.bind(this) }/>
 
-                    <TaskList tasks={ this.state.tasks } deleteTask={ this._deleteTask.bind(this) } />
+                    <TaskList tasks={ this.state.tasks } currentPage={ this.state.currentPage } lastPage={ this.state.lastPage } deleteTask={ this._deleteTask.bind(this) } getTasks={ this._getTasks.bind(this) } />
 
                 </div>
             </div>

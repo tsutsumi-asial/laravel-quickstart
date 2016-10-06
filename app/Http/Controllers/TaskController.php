@@ -40,11 +40,7 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $userTasks = $this->tasks->forUser($request->user());
-        return view('tasks.index', [
-            'tasks' => $this->tasks->forUser($request->user()),
-        ]);
-        //return response()->json($userTasks);
+        return view('tasks.index');
     }
 
     /**
@@ -89,8 +85,9 @@ class TaskController extends Controller
      */
     public function getTasks(Request $request)
     {
-        $userTasks = $this->tasks->forUser($request->user());
-        return response()->json($userTasks);
+        return $this->tasks->forUser($request->user(), 10);
+        //$userTasks = $this->tasks->forUser($request->user(), $perPage);
+        //return response()->json($userTasks);
     }
 
     /**

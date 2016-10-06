@@ -8,15 +8,16 @@ use App\Task;
 class TaskRepository
 {
     /**
-     * Get all of the tasks for a given user.
+     * Get the specified number of the tasks for a given user.
      *
      * @param  User  $user
      * @return Collection
      */
-    public function forUser(User $user)
+    public function forUser(User $user, $perPage)
     {
         return Task::where('user_id', $user->id)
-                    ->orderBy('created_at', 'asc')
-                    ->get();
+                    ->orderBy('id', 'desc')
+                    //->get();
+                    ->paginate($perPage);
     }
 }
