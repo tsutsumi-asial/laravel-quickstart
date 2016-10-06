@@ -93,6 +93,10 @@ class TaskController extends Controller
         return response()->json($userTasks);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function addTask(Request $request)
     {
         $this->validate($request, [
