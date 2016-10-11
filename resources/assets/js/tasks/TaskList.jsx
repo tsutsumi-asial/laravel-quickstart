@@ -9,9 +9,10 @@ export default class TaskList extends React.Component {
         this.state = {
             showMore: true
         }
+        this.showMore = this.showMore.bind(this);
     }
 
-    _showMore(e) {
+    showMore(e) {
         e.preventDefault();
         this.props.getTasks(this.props.currentPage + 1);
     }
@@ -19,22 +20,27 @@ export default class TaskList extends React.Component {
     render() {
         const taskNodes = this.props.tasks.map((task) => {
             return (
-                <Task key={ task.id } task={ task } deleteTask={ this.props.deleteTask } />
+                <Task
+                    key={task.id}
+                    task={task}
+                    deleteTask={this.props.deleteTask}
+                />
             );
         });
         let showMore = null;
         if(this.props.currentPage < this.props.lastPage) {
-            showMore = <button className="btn btn-default" onClick={ this._showMore.bind(this) }>Show More...</button>;
+            showMore =
+                <button
+                    className="btn btn-default"
+                    onClick={this.showMore}>
+                        Show More...
+                </button>;
         }
-        /*const showMore = this.state.showMore
-            ? <button className="btn btn-default" onClick={ this._showMore.bind(this) }>Show More...</button>
-            : null;*/
         return (
             <div className="panel panel-default">
                 <div className="panel-heading">
                     Current Tasks
                 </div>
-
                 <div className="panel-body">
                     <table className="table table-striped task-table">
                         <thead>

@@ -86,8 +86,37 @@ class TaskController extends Controller
     public function getTasks(Request $request)
     {
         return $this->tasks->forUser($request->user(), 10);
-        //$userTasks = $this->tasks->forUser($request->user(), $perPage);
-        //return response()->json($userTasks);
+    }
+
+    public function getTasksWithLabels(Request $request)
+    {
+        return Task::where('user_id', $request->user()->id)
+            ->with('labels')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        /*$data = [];
+        Task::with('labels');
+        foreach($tasks as $task) {
+            //$labels = $task->labels()->get(array('id', 'name'));
+            $task['labels'] = $task->labels()->get(array('id', 'name'));
+            $data[] = $task;
+            $labels = $task->pivot()->with();
+            foreach($labels as $label) {
+                $data[] = $label;
+            }
+        }
+        return $data;
+        /*$paginator = $this->tasks->forUser($request->user(), 10);
+        $data = [];
+        foreach($paginator->items() as $task) {
+            $labels = [];
+            foreach($task->labels() as $label) {
+                $labels[] = $label;
+            }
+            $task['labels'] = $task->labels();
+            $data[] = $task;
+        }
+        return response()->json($data);*/
     }
 
     /**
@@ -99,10 +128,16 @@ class TaskController extends Controller
         $this->validate($request, [
             'name' => 'required|max:255',
         ]);
-        $addedTask = $request->user()->tasks()->create([
+        $user = $request->user();
+        $task = $user->tasks()->create([
             'name' => $request->name,
         ]);
-        return response()->json($addedTask);
+        $task->labels()->attach($request->labels);
+
+        return $task
+            ->with('labels')
+            ->where('id', $task->id)
+            ->first();
     }
 
     public function deleteTask(Request $request, Task $task)
@@ -111,4 +146,5 @@ class TaskController extends Controller
         $isDeleted = $task->delete();
         return response()->json($isDeleted);
     }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Label;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +14,9 @@ class Task extends Model
      * @var array
      */
     protected $fillable = ['name'];
-    
+
+    protected $hidden = ['pivot'];
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -28,6 +31,11 @@ class Task extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo('App\User');
+    }
+
+    public function labels()
+    {
+        return $this->belongsToMany('App\Label');
     }
 }

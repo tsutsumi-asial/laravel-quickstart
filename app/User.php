@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Label;
 use App\Task;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -31,5 +32,10 @@ class User extends Authenticatable
     public function tasks()
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function labels()
+    {
+        return $this->hasMany(Label::class);
     }
 }

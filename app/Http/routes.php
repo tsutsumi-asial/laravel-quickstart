@@ -32,9 +32,13 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/task', 'TaskController@store');
     Route::delete('/task/{task}', 'TaskController@destroy');
 
-    Route::get('/api/tasks', 'TaskController@getTasks');
+    Route::get('/api/tasks', 'TaskController@getTasksWithLabels');
     Route::post('/api/tasks', 'TaskController@addTask');
     Route::delete('/api/tasks/{task}', 'TaskController@deleteTask');
+
+    Route::get('/api/labels', 'LabelController@getLabelsWithTasks');
+    Route::post('/api/labels', 'LabelController@addLabel');
+    Route::delete('/api/labels/{label}', 'LabelController@deleteLabel');
 
     Route::auth();
 
